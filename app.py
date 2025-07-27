@@ -10,7 +10,7 @@ import json
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://user:password@localhost/doctorpatient')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://user:password@localhost/lawyerclient')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
@@ -136,10 +136,10 @@ def dashboard():
     ).all()
     
     # Get potential chat partners
-    if user.role == 'doctor':
-        potential_partners = User.query.filter_by(role='patient').all()
+    if user.role == 'lawyer':
+        potential_partners = User.query.filter_by(role='client').all()
     else:
-        potential_partners = User.query.filter_by(role='doctor').all()
+        potential_partners = User.query.filter_by(role='lawyer').all()
     
     return render_template('dashboard.html', user=user, files=files, chat_rooms=chat_rooms, potential_partners=potential_partners)
 
@@ -194,12 +194,12 @@ def upload_file():
             flash('File uploaded and encrypted successfully!', 'success')
             return redirect(url_for('dashboard'))
     
-    # Get potential recipients (doctors can send to patients and vice versa)
+    # Get potential recipients (lawyers can send to clients and vice versa)
     current_user = User.query.get(session['user_id'])
-    if current_user.role == 'doctor':
-        recipients = User.query.filter_by(role='patient').all()
+    if current_user.role == 'lawyer':
+        recipients = User.query.filter_by(role='client').all()
     else:
-        recipients = User.query.filter_by(role='doctor').all()
+        recipients = User.query.filter_by(role='lawyer').all()
     
     return render_template('upload.html', recipients=recipients)
 
@@ -253,18 +253,18 @@ def create_chat():
     
     # Check if chat room already exists
     existing_room = ChatRoom.query.filter(
-        ((ChatRoom.doctor_id == session['user_id']) & (ChatRoom.patient_id == other_user_id)) |
-        ((ChatRoom.doctor_id == other_user_id) & (ChatRoom.patient_id == session['user_id']))
+        ((ChatRoom.lawyer_id == session['user_id']) & (ChatRoom.client_id == other_user_id)) |
+        ((ChatRoom.lawyer_id == other_user_id) & (ChatRoom.client_id == session['user_id']))
     ).first()
     
     if existing_room:
         return redirect(url_for('chat', room_id=existing_room.id))
     
     # Create new chat room
-    if current_user.role == 'doctor':
-        chat_room = ChatRoom(doctor_id=session['user_id'], patient_id=other_user_id)
+    if current_user.role == 'lawyer':
+        chat_room = ChatRoom(lawyer_id=session['user_id'], client_id=other_user_id)
     else:
-        chat_room = ChatRoom(doctor_id=other_user_id, patient_id=session['user_id'])
+        chat_room = ChatRoom(lawyer_id=other_user_id, client_id=session['user_id'])
     
     db.session.add(chat_room)
     db.session.commit()
