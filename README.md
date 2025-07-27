@@ -264,3 +264,4 @@ For support or questions:
 
 This application is designed for educational and demonstration purposes. For production healthcare environments, ensure compliance with relevant regulations (HIPAA, GDPR, etc.) and conduct thorough security audits.
 # lawyer
+# lawyer
