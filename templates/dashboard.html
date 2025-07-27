@@ -59,10 +59,10 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h6 class="card-title">
-                                        {% if user.role == 'doctor' %}
-                                            Chat with {{ room.patient.name }}
+                                        {% if user.role == 'lawyer' %}
+                                            Chat with {{ room.client.name }}
                                         {% else %}
-                                            Chat with {{ room.doctor.name }}
+                                            Chat with {{ room.lawyer.name }}
                                         {% endif %}
                                     </h6>
                                     <p class="card-text text-muted">

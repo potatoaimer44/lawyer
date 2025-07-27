@@ -7,35 +7,35 @@ def init_db(db, User):
     if User.query.first():
         return
     
-    # Create sample doctor and patient accounts
+    # Create sample lawyer and client accounts
     rsa_encryption = RSAEncryption()
     
-    # Create doctor account
-    doctor_private, doctor_public = rsa_encryption.generate_key_pair()
-    doctor = User(
-        name='Dr. John Smith',
-        email='doctor@example.com',
-        password_hash=generate_password_hash('doctor123'),
-        role='doctor',
-        private_key=doctor_private,
-        public_key=doctor_public
+    # Create lawyer account
+    lawyer_private, lawyer_public = rsa_encryption.generate_key_pair()
+    lawyer = User(
+        name='Mr. John Smith',
+        email='lawyer@example.com',
+        password_hash=generate_password_hash('lawyer123'),
+        role='lawyer',
+        private_key=lawyer_private,
+        public_key=lawyer_public
     )
     
-    # Create patient account
-    patient_private, patient_public = rsa_encryption.generate_key_pair()
-    patient = User(
+    # Create client account
+    client_private, client_public = rsa_encryption.generate_key_pair()
+    client = User(
         name='Jane Doe',
-        email='patient@example.com',
-        password_hash=generate_password_hash('patient123'),
-        role='patient',
-        private_key=patient_private,
-        public_key=patient_public
+        email='client@example.com',
+        password_hash=generate_password_hash('client123'),
+        role='client',
+        private_key=client_private,
+        public_key=client_public
     )
     
-    db.session.add(doctor)
-    db.session.add(patient)
+    db.session.add(lawyer)
+    db.session.add(client)
     db.session.commit()
     
     print("Sample accounts created:")
-    print("Doctor: doctor@example.com / doctor123")
-    print("Patient: patient@example.com / patient123")
+    print("Lawyer: lawyer@example.com / lawyer123")
+    print("Client: client@example.com / client123")
