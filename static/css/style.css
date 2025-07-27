@@ -1,0 +1,193 @@
+/* Custom styles for SecureHealth application */
+
+body {
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar-brand {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.hero-section {
+  padding: 3rem 0;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+}
+
+.feature-card {
+  padding: 2rem;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.card {
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  border-radius: 10px;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  border-radius: 10px 10px 0 0 !important;
+  font-weight: 600;
+}
+
+.btn {
+  border-radius: 25px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.chat-messages {
+  border-radius: 10px;
+}
+
+.message-bubble {
+  word-wrap: break-word;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  border-top: none;
+  font-weight: 600;
+}
+
+.alert {
+  border-radius: 10px;
+  border: none;
+}
+
+.form-control,
+.form-select {
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.modal-content {
+  border-radius: 15px;
+  border: none;
+}
+
+.modal-header {
+  border-radius: 15px 15px 0 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+
+  .feature-card {
+    padding: 1.5rem;
+  }
+
+  .message-bubble {
+    max-width: 85% !important;
+  }
+}
+
+/* Loading animation */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Security indicators */
+.security-badge {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.encryption-indicator {
+  color: #28a745;
+  font-size: 0.9rem;
+}
+
+/* File upload area */
+.upload-area {
+  border: 2px dashed #007bff;
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+  background-color: #e9ecef;
+  border-color: #0056b3;
+}
+
+/* Status indicators */
+.status-online {
+  color: #28a745;
+}
+
+.status-offline {
+  color: #6c757d;
+}
+
+/* Professional healthcare colors */
+.bg-medical-blue {
+  background-color: #2c5aa0 !important;
+}
+
+.bg-medical-green {
+  background-color: #4a90a4 !important;
+}
+
+.text-medical-blue {
+  color: #2c5aa0 !important;
+}
+
+.text-medical-green {
+  color: #4a90a4 !important;
+}

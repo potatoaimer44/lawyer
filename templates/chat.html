@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - SecureHealth{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-comments me-2"></i>
+                    Chat with 
+                    {% if session.user_role == 'doctor' %}
+                        {{ chat_room.patient.name }}
+                    {% else %}
+                        {{ chat_room.doctor.name }}
+                    {% endif %}
+                </h5>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-light btn-sm">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                </a>
+            </div>
+            <div class="card-body">
+                <div id="messages" class="chat-messages mb-3" style="height: 400px; overflow-y: auto; border: 1px solid #dee2e6; padding: 15px; background-color: #f8f9fa;">
+                    {% for message in messages %}
+                    <div class="message mb-3 {% if message.sender_id == session.user_id %}text-end{% endif %}">
+                        <div class="message-bubble {% if message.sender_id == session.user_id %}bg-primary text-white ms-auto{% else %}bg-white border{% endif %}" style="max-width: 70%; padding: 10px; border-radius: 15px; display: inline-block;">
+                            <div class="message-content">{{ message.content }}</div>
+                            <small class="message-meta d-block mt-1 {% if message.sender_id == session.user_id %}text-light{% else %}text-muted{% endif %}">
+                                {{ message.sender.name }} - {{ message.created_at.strftime('%H:%M') }}
+                                <button class="btn btn-sm btn-link p-0 ms-1 verify-btn" 
+                                        data-message="{{ message.content }}" 
+                                        data-signature="{{ message.signature }}" 
+                                        data-sender-id="{{ message.sender_id }}"
+                                        title="Verify signature">
+                                    <i class="fas fa-certificate" style="font-size: 0.8em;"></i>
+                                </button>
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" id="messageInput" class="form-control" placeholder="Type your message..." maxlength="500">
+                    <button class="btn btn-primary" type="button" id="sendButton">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                
+                <div class="mt-2">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        All messages are digitally signed for authenticity verification.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Signature Verification Modal -->
+<div class="modal fade" id="signatureModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Message Signature Verification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="signatureResult"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const socket = io();
+    const roomId = {{ chat_room.id }};
+    const userName = "{{ session.user_name }}";
+    const userId = {{ session.user_id }};
+    
+    // Join the chat room
+    socket.emit('join', {room: roomId});
+    
+    // Handle incoming messages
+    socket.on('message', function(data) {
+        const messagesDiv = document.getElementById('messages');
+        const isOwnMessage = data.sender_id === userId;
+        
+        const messageHtml = `
+            <div class="message mb-3 ${isOwnMessage ? 'text-end' : ''}">
+                <div class="message-bubble ${isOwnMessage ? 'bg-primary text-white ms-auto' : 'bg-white border'}" style="max-width: 70%; padding: 10px; border-radius: 15px; display: inline-block;">
+                    <div class="message-content">${data.message}</div>
+                    <small class="message-meta d-block mt-1 ${isOwnMessage ? 'text-light' : 'text-muted'}">
+                        ${data.sender} - ${data.timestamp}
+                        <button class="btn btn-sm btn-link p-0 ms-1 verify-btn" 
+                                data-message="${data.message}" 
+                                data-signature="${data.signature}" 
+                                data-sender-id="${data.sender_id}"
+                                title="Verify signature">
+                            <i class="fas fa-certificate" style="font-size: 0.8em;"></i>
+                        </button>
+                    </small>
+                </div>
+            </div>
+        `;
+        
+        messagesDiv.innerHTML += messageHtml;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+    
+    // Handle status messages
+    socket.on('status', function(data) {
+        console.log(data.msg);
+    });
+    
+    // Send message function
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+        
+        if (message) {
+            socket.emit('message', {
+                room: roomId,
+                message: message
+            });
+            messageInput.value = '';
+        }
+    }
+    
+    // Event listeners
+    document.getElementById('sendButton').addEventListener('click', sendMessage);
+    document.getElementById('messageInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+    
+    // Signature verification
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.verify-btn')) {
+            const btn = e.target.closest('.verify-btn');
+            const message = btn.dataset.message;
+            const signature = btn.dataset.signature;
+            const senderId = btn.dataset.senderId;
+            
+            fetch('/verify_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message,
+                    signature: signature,
+                    sender_id: senderId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('signatureResult');
+                if (data.valid) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>Signature Valid</strong><br>
+                            This message has been verified as authentic and has not been tampered with.
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Signature Invalid</strong><br>
+                            This message could not be verified. It may have been tampered with or corrupted.
+                        </div>
+                    `;
+                }
+                
+                const modal = new bootstrap.Modal(document.getElementById('signatureModal'));
+                modal.show();
+            })
+            .catch(error => {
+                console.error('Error verifying signature:', error);
+            });
+        }
+    });
+    
+    // Auto-scroll to bottom on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+</script>
+{% endblock %}

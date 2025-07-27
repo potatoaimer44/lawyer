@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="hero-section text-center mb-5">
+            <h1 class="display-4 text-primary mb-4">
+                <i class="fas fa-shield-alt me-3"></i>SecureHealth Portal
+            </h1>
+            <p class="lead mb-4">
+                Secure, encrypted communication platform for healthcare professionals and patients.
+                Share files and communicate with end-to-end encryption and digital signatures.
+            </p>
+            <div class="row mt-5">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <i class="fas fa-lock fa-3x text-primary mb-3"></i>
+                        <h4>RSA Encryption</h4>
+                        <p>All files and messages are encrypted with industry-standard RSA encryption.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <i class="fas fa-signature fa-3x text-primary mb-3"></i>
+                        <h4>Digital Signatures</h4>
+                        <p>Every message is digitally signed to ensure authenticity and integrity.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <i class="fas fa-comments fa-3x text-primary mb-3"></i>
+                        <h4>Secure Chat</h4>
+                        <p>Real-time encrypted communication between doctors and patients.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-sign-in-alt fa-3x text-primary mb-3"></i>
+                        <h4 class="card-title">Login</h4>
+                        <p class="card-text">Access your secure account to communicate and share files.</p>
+                        <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-plus fa-3x text-success mb-3"></i>
+                        <h4 class="card-title">Register</h4>
+                        <p class="card-text">Create a new account as a doctor or patient.</p>
+                        <a href="{{ url_for('register') }}" class="btn btn-success">Register</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
